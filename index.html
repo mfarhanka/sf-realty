@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syed Agent | SF Realty</title>
+    <!-- Google Fonts & FontAwesome for Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- Theme Variables --- */
+        :root {
+            --primary-orange: #FF6B00;
+            --dark-orange: #E05E00;
+            --light-orange: #FFF0E6;
+            --pure-white: #FFFFFF;
+            --off-white: #F9F9F9;
+            --text-dark: #2D2D2D;
+            --text-muted: #666666;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- Reset & Base Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--off-white);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- Header & Navigation --- */
+        header {
+            background-color: var(--pure-white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .logo span {
+            color: var(--primary-orange);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-orange);
+            font-weight: 600;
+        }
+
+        .btn-contact {
+            background-color: var(--primary-orange);
+            color: var(--pure-white);
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn-contact:hover {
+            background-color: var(--dark-orange);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.85)), 
+                        url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1920&q=80') center/cover;
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .hero-content h1 span {
+            color: var(--primary-orange);
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        /* --- Filter / Search Bar --- */
+        .search-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--pure-white);
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 2;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 12px 12px 45px;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .search-container select {
+            flex: 1;
+            min-width: 150px;
+            padding: 12px;
+            border: 1px solid #E0E0E0;
+            border-radius: 6px;
+            outline: none;
+            background: var(--pure-white);
+        }
+
+        .btn-search {
+            background-color: var(--primary-orange);
+            color: var(--pure-white);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* --- Main Content (Property Grid) --- */
+        .main-container {
+            max-width: 1400px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-orange);
+            border-radius: 2px;
+        }
+
+        /* 4 Units Per Row Layout */
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .property-card {
+            background: var(--pure-white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #F0F0F0;
+        }
+
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 107, 0, 0.15);
+        }
+
+        .property-thumb {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .property-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .tag-status {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: var(--primary-orange);
+            color: var(--pure-white);
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 20px;
+        }
+
+        .property-details {
+            padding: 20px;
+        }
+
+        .price {
+            font-size: 22px;
+            color: var(--primary-orange);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .location {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .location i {
+            margin-right: 5px;
+            color: var(--primary-orange);
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #F0F0F0;
+            padding-top: 15px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .features span i {
+            color: var(--primary-orange);
+            margin-right: 4px;
+        }
+
+        /* --- Footer Section --- */
+        footer {
+            background-color: #1A1A1A;
+            color: var(--pure-white);
+            padding: 40px 20px;
+            margin-top: 100px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .footer-logo span {
+            color: var(--primary-orange);
+        }
+
+        .footer-text {
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* --- Responsive Breakpoints --- */
+        @media (max-width: 1200px) {
+            .property-grid {
+                grid-template-columns: repeat(3, 1fr); /* 3 items on standard desktops */
+            }
+        }
+
+        @media (max-width: 900px) {
+            .property-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 items on tablets */
+            }
+            .search-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .property-grid {
+                grid-template-columns: 1fr; /* 1 item on mobile screens */
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">SF <span>Realty</span></div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Properties</a></li>
+                <li><a href="#">About Syed</a></li>
+                <li><a href="#">Testimonials</a></li>
+            </ul>
+            <a href="https://wa.me/#" class="btn-contact"><i class="fa-brands fa-whatsapp"></i> Contact Syed</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Find Your Dream Home With <span>Syed Agent</span></h1>
+            <p>Your trusted real estate partner at SF Realty</p>
+            
+            <!-- Search / Filter Bar -->
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search by location, neighborhood, or project...">
+                </div>
+                <select>
+                    <option value="">Property Type</option>
+                    <option value="condo">Condominium</option>
+                    <option value="terrace">Terrace House</option>
+                    <option value="semi-d">Semi-D</option>
+                    <option value="bungalow">Bungalow</option>
+                </select>
+                <select>
+                    <option value="">Budget (Max)</option>
+                    <option value="300k">$300,000</option>
+                    <option value="500k">$500,000</option>
+                    <option value="750k">$750,000</option>
+                    <option value="1m">$1,000,000+</option>
+                </select>
+                <button class="btn-search">Search</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <main class="main-container">
+        <h2 class="section-title">Syed's Featured Listings</h2>
+        
+        <!-- 4 Units Per Row Container -->
+        <div class="property-grid">
+            
+            <!-- Unit 1 -->
+            <div class="property-card">
+                <div class="property-thumb">
+                    <span class="tag-status">For Sale</span>
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80" alt="Property">
+                </div>
+                <div class="property-details">
+                    <div class="price">$520,000</div>
+                    <div class="title">Modern Luxury Villa</div>
+                    <div class="location"><i class="fa-solid fa-location-dot"></i> Amber Heights, Section 7</div>
+                    <div class="features">
+                        <span><i class="fa-solid fa-bed"></i> 4 Beds</span>
+                        <span><i class="fa-solid fa-bath"></i> 3 Baths</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 2,200 sqft</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit 2 -->
+            <div class="property-card">
+                <div class="property-thumb">
+                    <span class="tag-status">For Sale</span>
+                    <img src="https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=500&q=80" alt="Property">
+                </div>
+                <div class="property-details">
+                    <div class="price">$315,000</div>
+                    <div class="title">Skyline View Condominium</div>
+                    <div class="location"><i class="fa-solid fa-location-dot"></i> City Centre, Block B</div>
+                    <div class="features">
+                        <span><i class="fa-solid fa-bed"></i> 3 Beds</span>
+                        <span><i class="fa-solid fa-bath"></i> 2 Baths</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 1,100 sqft</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit 3 -->
+            <div class="property-card">
+                <div class="property-thumb">
+                    <span class="tag-status">New Launch</span>
+                    <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=500&q=80" alt="Property">
+                </div>
+                <div class="property-details">
+                    <div class="price">$740,000</div>
+                    <div class="title">2-Story Minimalist Terrace</div>
+                    <div class="location"><i class="fa-solid fa-location-dot"></i> Clover Park Residences</div>
+                    <div class="features">
+                        <span><i class="fa-solid fa-bed"></i> 4 Beds</span>
+                        <span><i class="fa-solid fa-bath"></i> 4 Baths</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 2,600 sqft</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit 4 -->
+            <div class="property-card">
+                <div class="property-thumb">
+                    <span class="tag-status">For Sale</span>
+                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=500&q=80" alt="Property">
+                </div>
+                <div class="property-details">
+                    <div class="price">$1,250,000</div>
+                    <div class="title">Exclusive Botanical Bungalow</div>
+                    <div class="location"><i class="fa-solid fa-location-dot"></i> Green Hills Estate</div>
+                    <div class="features">
+                        <span><i class="fa-solid fa-bed"></i> 5 Beds</span>
+                        <span><i class="fa-solid fa-bath"></i> 6 Baths</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 4,500 sqft</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit 5 -->
+            <div class="property-card">
+                <div class="property-thumb">
+                    <span class="tag-status">For Rent</span>
+                    <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=500&q=80" alt="Property">
+                </div>
+                <div class="property-details">
+                    <div class="price">$2,200/mo</div>
+                    <div class="title">Cozy Family Townhouse</div>
+                    <div class="location"><i class="fa-solid fa-location-dot"></i> Saujana Utama</div>
+                    <div class="features">
+                        <span><i class="fa-solid fa-bed"></i> 3 Beds</span>
+                        <span><i class="fa-solid fa-bath"></i> 3 Baths</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 1,800 sqft</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit 6 -->
+            <div class="property-card">
+                <div class="property-thumb">
+                    <span class="tag-status">For Sale</span>
+                    <img src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=500&q=80" alt="Property">
+                </div>
+                <div class="property-details">
+                    <div class="price">$450,000</div>
+                    <div class="title">Urban Duplex Penthouse</div>
+                    <div class="location"><i class="fa-solid fa-location-dot"></i> Metro Heights Metro</div>
+                    <div class="features">
+                        <span><i class="fa-solid fa-bed"></i> 2 Beds</span>
+                        <span><i class="fa-solid fa-bath"></i> 2 Baths</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 1,350 sqft</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit 7 -->
+            <div class="property-card">
+                <div class="property-thumb">
+                    <span class="tag-status">New Launch</span>
+                    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=500&q=80" alt="Property">
+                </div>
+                <div class="property-details">
+                    <div class="price">$620,000</div>
+                    <div class="title">Modern Smart Home Sem-D</div>
+                    <div class="location"><i class="fa-solid fa-location-dot"></i> Cyber Grove Cyber</div>
+                    <div class="features">
+                        <span><i class="fa-solid fa-bed"></i> 4 Beds</span>
+                        <span><i class="fa-solid fa-bath"></i> 4 Baths</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 2,400 sqft</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit 8 -->
+            <div class="property-card">
+                <div class="property-thumb">
+                    <span class="tag-status">For Rent</span>
+                    <img src="https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&w=500&q=80" alt="Property">
+                </div>
+                <div class="property-details">
+                    <div class="price">$1,800/mo</div>
+                    <div class="title">Studio Apartment Studio</div>
+                    <div class="location"><i class="fa-solid fa-location-dot"></i> Nexus Suites, Central</div>
+                    <div class="features">
+                        <span><i class="fa-solid fa-bed"></i> 1 Bed</span>
+                        <span><i class="fa-solid fa-bath"></i> 1 Bath</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 650 sqft</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">SF <span>Realty</span></div>
+        <p class="footer-text">© 2026 Syed Agent - SF Realty. All Rights Reserved.</p>
+        <p class="footer-text" style="font-size: 12px; margin-top: 5px;">Regulated Real Estate Negotiator</p>
+    </footer>
+
+</body>
+</html>
