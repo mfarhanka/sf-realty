@@ -42,19 +42,19 @@
         <!-- Quick Summary Stats Metrics -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-info"><h3>Total Units</h3><p>8</p></div>
+                <div class="stat-info"><h3>Total Units</h3><p id="totalUnitsCount">8</p></div>
                 <div class="stat-icon"><i class="fa-solid fa-building"></i></div>
             </div>
             <div class="stat-card">
-                <div class="stat-info"><h3>For Sale</h3><p>5</p></div>
+                <div class="stat-info"><h3>For Sale</h3><p id="forSaleCount">5</p></div>
                 <div class="stat-icon"><i class="fa-solid fa-tags"></i></div>
             </div>
             <div class="stat-card">
-                <div class="stat-info"><h3>For Rent</h3><p>2</p></div>
+                <div class="stat-info"><h3>For Rent</h3><p id="forRentCount">2</p></div>
                 <div class="stat-icon"><i class="fa-solid fa-key"></i></div>
             </div>
             <div class="stat-card">
-                <div class="stat-info"><h3>New Launches</h3><p>1</p></div>
+                <div class="stat-info"><h3>New Launches</h3><p id="newLaunchCount">1</p></div>
                 <div class="stat-icon"><i class="fa-solid fa-sparkles"></i></div>
             </div>
         </div>
@@ -65,7 +65,7 @@
                 <h2>Active Database Directory</h2>
                 <div class="search-bar">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Filter active property listings...">
+                    <input type="text" id="listingSearchInput" placeholder="Filter active property listings...">
                 </div>
             </div>
             
@@ -80,7 +80,7 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="listingTableBody">
                     <!-- Mock Row 1 -->
                     <tr>
                         <td>
@@ -178,21 +178,21 @@
     <div class="modal-overlay" id="addModalOverlay">
         <div class="modal-box">
             <div class="modal-header">
-                <h3>Create New Property Record</h3>
+                <h3 id="modalTitle">Create New Property Record</h3>
                 <button class="btn-close-modal" id="closeModalBtn">&times;</button>
             </div>
             <form class="modal-form" id="listingForm">
                 <div class="form-group full-width">
                     <label>Property Listing Title</label>
-                    <input type="text" placeholder="e.g., Luxury Corner Lot Semi-D" required>
+                    <input type="text" id="listingTitleInput" name="title" placeholder="e.g., Luxury Corner Lot Semi-D" required>
                 </div>
                 <div class="form-group full-width">
                     <label>Location Area Address</label>
-                    <input type="text" placeholder="e.g., Setia Alam, Shah Alam" required>
+                    <input type="text" id="listingLocationInput" name="location" placeholder="e.g., Setia Alam, Shah Alam" required>
                 </div>
                 <div class="form-group">
                     <label>Listing Status</label>
-                    <select required>
+                    <select id="listingStatusInput" name="status" required>
                         <option value="sale">For Sale</option>
                         <option value="rent">For Rent</option>
                         <option value="launch">New Launch</option>
@@ -200,36 +200,39 @@
                 </div>
                 <div class="form-group">
                     <label>Property Category</label>
-                    <select required>
+                    <select id="listingTypeInput" name="type" required>
                         <option value="terrace">Terrace House</option>
                         <option value="condo">Condominium</option>
                         <option value="semi-d">Semi-D</option>
                         <option value="bungalow">Bungalow</option>
+                        <option value="townhouse">Townhouse</option>
+                        <option value="penthouse">Penthouse</option>
+                        <option value="studio">Studio</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Price Value (RM)</label>
-                    <input type="text" placeholder="e.g., 650000" required>
+                    <input type="text" id="listingPriceInput" name="price" placeholder="e.g., 650000" required>
                 </div>
                 <div class="form-group">
                     <label>Build Up Size (sf)</label>
-                    <input type="number" placeholder="e.g., 1500" required>
+                    <input type="number" id="listingSizeInput" name="size" placeholder="e.g., 1500" required>
                 </div>
                 <div class="form-group">
                     <label>Bedrooms Count</label>
-                    <input type="number" placeholder="e.g., 4" required>
+                    <input type="number" id="listingBedroomsInput" name="bedrooms" placeholder="e.g., 4" required>
                 </div>
                 <div class="form-group">
                     <label>Bathrooms Count</label>
-                    <input type="number" placeholder="e.g., 3" required>
+                    <input type="number" id="listingBathroomsInput" name="bathrooms" placeholder="e.g., 3" required>
                 </div>
                 <div class="form-group full-width">
                     <label>Image Reference Link URL</label>
-                    <input type="url" placeholder="https://images.unsplash.com/..." required>
+                    <input type="url" id="listingImageInput" name="image" placeholder="https://images.unsplash.com/..." required>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" id="cancelModalBtn">Cancel</button>
-                    <button type="submit" class="btn-save">Publish Listing</button>
+                    <button type="submit" class="btn-save" id="submitListingBtn">Publish Listing</button>
                 </div>
             </form>
         </div>
