@@ -181,7 +181,7 @@
                 <h3>Create New Property Record</h3>
                 <button class="btn-close-modal" id="closeModalBtn">&times;</button>
             </div>
-            <form class="modal-form" onsubmit="event.preventDefault();">
+            <form class="modal-form" id="listingForm">
                 <div class="form-group full-width">
                     <label>Property Listing Title</label>
                     <input type="text" placeholder="e.g., Luxury Corner Lot Semi-D" required>
@@ -235,25 +235,6 @@
         </div>
     </div>
 
-    <!-- UI Operations Modal Control Script -->
-    <script>
-        const modal = document.getElementById('addModalOverlay');
-        const openBtn = document.getElementById('openAddModalBtn');
-        const closeBtn = document.getElementById('closeModalBtn');
-        const cancelBtn = document.getElementById('cancelModalBtn');
-
-        function toggleModal() {
-            modal.classList.toggle('active');
-        }
-
-        openBtn.addEventListener('click', toggleModal);
-        closeBtn.addEventListener('click', toggleModal);
-        cancelBtn.addEventListener('click', toggleModal);
-
-        // Click outside container to dismiss modal safely
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) toggleModal();
-        });
-    </script>
+    <script src="../assets/js/admin.js"></script>
 </body>
 </html>
