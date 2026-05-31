@@ -38,23 +38,23 @@
             <div class="search-container">
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search by location, area, or project...">
+                    <input type="text" id="siteSearchInput" placeholder="Search by location, area, or project...">
                 </div>
-                <select>
+                <select id="siteTypeFilter">
                     <option value="">Property Type</option>
                     <option value="condo">Condominium</option>
                     <option value="terrace">Terrace House</option>
                     <option value="semi-d">Semi-D</option>
                     <option value="bungalow">Bungalow</option>
                 </select>
-                <select>
+                <select id="siteBudgetFilter">
                     <option value="">Max Budget</option>
-                    <option value="300k">RM 300,000</option>
-                    <option value="500k">RM 500,000</option>
-                    <option value="750k">RM 750,000</option>
-                    <option value="1m">RM 1,000,000+</option>
+                    <option value="300000">RM 300,000</option>
+                    <option value="500000">RM 500,000</option>
+                    <option value="750000">RM 750,000</option>
+                    <option value="1000000">RM 1,000,000</option>
                 </select>
-                <button class="btn-search">Search</button>
+                <button class="btn-search" id="siteSearchButton">Search</button>
             </div>
         </div>
     </section>
@@ -64,7 +64,7 @@
         <h2 class="section-title">Featured Listings</h2>
         
         <!-- 4 Units Per Row Container -->
-        <div class="property-grid">
+        <div class="property-grid" id="propertyGrid">
             
             <!-- Unit 1 -->
             <div class="property-card">
@@ -244,5 +244,6 @@
         <p class="footer-text" style="font-size: 12px; margin-top: 5px;">Syed Agent (REN XXXXX) | SF Realty E(1)XXXX</p>
     </footer>
 
+    <script src="assets/js/site.js"></script>
 </body>
 </html>

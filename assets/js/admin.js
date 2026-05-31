@@ -7,6 +7,7 @@ const listingTableBody = document.getElementById('listingTableBody');
 const searchInput = document.getElementById('listingSearchInput');
 const modalTitle = document.getElementById('modalTitle');
 const submitButton = document.getElementById('submitListingBtn');
+const apiUrl = window.sfRealtyApiUrl || '../api/listings.php';
 
 const stats = {
     total: document.getElementById('totalUnitsCount'),
@@ -44,106 +45,7 @@ const typeValueMap = {
     'Bungalow / Villa': 'bungalow'
 };
 
-const initialListings = [
-    {
-        id: 1,
-        title: 'Modern Luxury Villa',
-        location: 'Amber Heights, Section 7',
-        status: 'sale',
-        type: 'Bungalow / Villa',
-        price: 'RM 520,000',
-        size: 2200,
-        bedrooms: 4,
-        bathrooms: 3,
-        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=100&q=80'
-    },
-    {
-        id: 2,
-        title: 'Skyline View Condominium',
-        location: 'City Centre, Block B',
-        status: 'sale',
-        type: 'Condominium',
-        price: 'RM 315,000',
-        size: 1100,
-        bedrooms: 3,
-        bathrooms: 2,
-        image: 'https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=100&q=80'
-    },
-    {
-        id: 3,
-        title: '2-Story Minimalist Terrace',
-        location: 'Clover Park Residences',
-        status: 'launch',
-        type: 'Terrace House',
-        price: 'RM 740,000',
-        size: 2600,
-        bedrooms: 4,
-        bathrooms: 4,
-        image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=100&q=80'
-    },
-    {
-        id: 4,
-        title: 'Exclusive Botanical Bungalow',
-        location: 'Green Hills Estate',
-        status: 'sale',
-        type: 'Bungalow',
-        price: 'RM 1,250,000',
-        size: 4500,
-        bedrooms: 5,
-        bathrooms: 6,
-        image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=100&q=80'
-    },
-    {
-        id: 5,
-        title: 'Cozy Family Townhouse',
-        location: 'Saujana Utama',
-        status: 'rent',
-        type: 'Townhouse',
-        price: 'RM 2,200/mo',
-        size: 1800,
-        bedrooms: 3,
-        bathrooms: 3,
-        image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=100&q=80'
-    },
-    {
-        id: 6,
-        title: 'Urban Duplex Penthouse',
-        location: 'Metro Heights',
-        status: 'sale',
-        type: 'Penthouse',
-        price: 'RM 450,000',
-        size: 1350,
-        bedrooms: 2,
-        bathrooms: 2,
-        image: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=100&q=80'
-    },
-    {
-        id: 7,
-        title: 'Smart Home Semi-D',
-        location: 'Cyber Grove',
-        status: 'sale',
-        type: 'Semi-D',
-        price: 'RM 620,000',
-        size: 2400,
-        bedrooms: 4,
-        bathrooms: 4,
-        image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=100&q=80'
-    },
-    {
-        id: 8,
-        title: 'Modern Studio Suite',
-        location: 'Nexus Suites, Central',
-        status: 'rent',
-        type: 'Studio',
-        price: 'RM 1,800/mo',
-        size: 650,
-        bedrooms: 1,
-        bathrooms: 1,
-        image: 'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&w=100&q=80'
-    }
-];
-
-let listings = [...initialListings];
+let listings = [];
 let editingListingId = null;
 
 function openModal() {
@@ -280,33 +182,69 @@ function handleEditListing(listingId) {
 }
 
 function handleDeleteListing(listingId) {
-    listings = listings.filter((listing) => listing.id !== listingId);
-    updateStats();
-    renderListings(searchInput.value);
+    deleteListing(listingId);
 }
 
-function handleFormSubmit(event) {
+async function handleFormSubmit(event) {
     event.preventDefault();
 
     const formValues = getFormValues();
 
     if (editingListingId === null) {
-        listings.unshift({
-            id: Date.now(),
-            ...formValues
-        });
+        await createListing(formValues);
     } else {
-        listings = listings.map((listing) => (
-            listing.id === editingListingId
-                ? { ...listing, ...formValues }
-                : listing
-        ));
+        await updateListing(editingListingId, formValues);
     }
 
     resetForm();
     closeModal();
+    await loadListings(searchInput.value);
+}
+
+async function requestJson(url, options = {}) {
+    const response = await fetch(url, {
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+        },
+        ...options
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.error || 'Request failed.');
+    }
+
+    return data;
+}
+
+async function loadListings(filterText = '') {
+    const data = await requestJson(apiUrl, { method: 'GET' });
+    listings = Array.isArray(data.listings) ? data.listings : [];
     updateStats();
-    renderListings(searchInput.value);
+    renderListings(filterText);
+}
+
+async function createListing(payload) {
+    await requestJson(apiUrl, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+    });
+}
+
+async function updateListing(listingId, payload) {
+    await requestJson(`${apiUrl}?id=${listingId}`, {
+        method: 'PUT',
+        body: JSON.stringify(payload)
+    });
+}
+
+async function deleteListing(listingId) {
+    await requestJson(`${apiUrl}?id=${listingId}`, {
+        method: 'DELETE'
+    });
+    await loadListings(searchInput.value);
 }
 
 openButton.addEventListener('click', () => {
@@ -356,5 +294,6 @@ window.addEventListener('click', (event) => {
     }
 });
 
-updateStats();
-renderListings();
+loadListings().catch(() => {
+    listingTableBody.innerHTML = '<tr><td colspan="6">Unable to load listings from the database.</td></tr>';
+});
