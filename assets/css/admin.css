@@ -1,30 +1,12 @@
-/* --- Theme Variables --- */
 :root {
-    --primary-orange: #FF6B00;
-    --dark-orange: #E05E00;
-    --light-orange: #FFF0E6;
-    --pure-white: #FFFFFF;
     --off-white: #F4F6F9;
-    --text-dark: #2D2D2D;
-    --text-muted: #666666;
     --border-color: #E5E7EB;
     --danger-red: #EF4444;
     --success-green: #10B981;
-    --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-/* --- Reset & Base Styles --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
 }
 
 body {
     background-color: var(--off-white);
-    color: var(--text-dark);
-    line-height: 1.6;
     display: flex;
     min-height: 100vh;
 }

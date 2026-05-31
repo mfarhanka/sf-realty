@@ -1,0 +1,35 @@
+/* --- Shared Theme Variables --- */
+:root {
+    --primary-orange: #FF6B00;
+    --dark-orange: #E05E00;
+    --light-orange: #FFF0E6;
+    --pure-white: #FFFFFF;
+    --text-dark: #2D2D2D;
+    --text-muted: #666666;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Shared Reset & Base Styles --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* --- Shared Responsive Helpers --- */
+@media (max-width: 768px) {
+    body {
+        min-width: 320px;
+    }
+}
