@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | SF Realty Management</title>
+    <!-- Google Fonts & FontAwesome for Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Sidebar Management Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-brand">SF <span>Realty</span></div>
+        <ul class="sidebar-menu">
+            <li class="active"><a href="#"><i class="fa-solid fa-house-chimney"></i> Manage Listings</a></li>
+            <li><a href="#"><i class="fa-solid fa-chart-simple"></i> Performance</a></li>
+            <li><a href="#"><i class="fa-solid fa-envelope"></i> Leads Received</a></li>
+            <li><a href="#"><i class="fa-solid fa-gear"></i> Profile Settings</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <p>Logged in as:</p>
+            <strong>Syed Agent (REN)</strong>
+        </div>
+    </div>
+
+    <!-- Main Working Panel -->
+    <div class="main-content">
+        
+        <!-- Dashboard Top Header Bar -->
+        <div class="admin-header">
+            <div class="admin-title">
+                <h1>Property Listings Management</h1>
+                <p>Welcome back, Syed. Update your active listings database here.</p>
+            </div>
+            <button class="btn-add" id="openAddModalBtn"><i class="fa-solid fa-plus"></i> Add New Unit</button>
+        </div>
+
+        <!-- Quick Summary Stats Metrics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-info"><h3>Total Units</h3><p>8</p></div>
+                <div class="stat-icon"><i class="fa-solid fa-building"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info"><h3>For Sale</h3><p>5</p></div>
+                <div class="stat-icon"><i class="fa-solid fa-tags"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info"><h3>For Rent</h3><p>2</p></div>
+                <div class="stat-icon"><i class="fa-solid fa-key"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info"><h3>New Launches</h3><p>1</p></div>
+                <div class="stat-icon"><i class="fa-solid fa-sparkles"></i></div>
+            </div>
+        </div>
+
+        <!-- Interactive Listings Data Table Container -->
+        <div class="table-container">
+            <div class="table-header-tools">
+                <h2>Active Database Directory</h2>
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Filter active property listings...">
+                </div>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Property Details</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Price Scale</th>
+                        <th>Build Up Size</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Mock Row 1 -->
+                    <tr>
+                        <td>
+                            <div class="property-cell">
+                                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=100&q=80" alt="Villa">
+                                <div>
+                                    <div class="property-name">Modern Luxury Villa</div>
+                                    <div class="property-loc">Amber Heights, Section 7</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Bungalow / Villa</td>
+                        <td><span class="badge-status badge-sale">For Sale</span></td>
+                        <td><strong>RM 520,000</strong></td>
+                        <td>2,200 sf</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="btn-action btn-edit" title="Edit Listing"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="btn-action btn-delete" title="Remove Listing"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Mock Row 2 -->
+                    <tr>
+                        <td>
+                            <div class="property-cell">
+                                <img src="https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=100&q=80" alt="Condo">
+                                <div>
+                                    <div class="property-name">Skyline View Condominium</div>
+                                    <div class="property-loc">City Centre, Block B</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Condominium</td>
+                        <td><span class="badge-status badge-sale">For Sale</span></td>
+                        <td><strong>RM 315,000</strong></td>
+                        <td>1,100 sf</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="btn-action btn-edit" title="Edit Listing"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="btn-action btn-delete" title="Remove Listing"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Mock Row 3 -->
+                    <tr>
+                        <td>
+                            <div class="property-cell">
+                                <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=100&q=80" alt="Terrace">
+                                <div>
+                                    <div class="property-name">2-Story Minimalist Terrace</div>
+                                    <div class="property-loc">Clover Park Residences</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Terrace House</td>
+                        <td><span class="badge-status badge-launch">New Launch</span></td>
+                        <td><strong>RM 740,000</strong></td>
+                        <td>2,600 sf</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="btn-action btn-edit" title="Edit Listing"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="btn-action btn-delete" title="Remove Listing"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Mock Row 4 -->
+                    <tr>
+                        <td>
+                            <div class="property-cell">
+                                <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=100&q=80" alt="Townhouse">
+                                <div>
+                                    <div class="property-name">Cozy Family Townhouse</div>
+                                    <div class="property-loc">Saujana Utama</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Townhouse</td>
+                        <td><span class="badge-status badge-rent">For Rent</span></td>
+                        <td><strong>RM 2,200/mo</strong></td>
+                        <td>1,800 sf</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="btn-action btn-edit" title="Edit Listing"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="btn-action btn-delete" title="Remove Listing"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add New Listing Dialog Modal Overlay Box -->
+    <div class="modal-overlay" id="addModalOverlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Create New Property Record</h3>
+                <button class="btn-close-modal" id="closeModalBtn">&times;</button>
+            </div>
+            <form class="modal-form" onsubmit="event.preventDefault();">
+                <div class="form-group full-width">
+                    <label>Property Listing Title</label>
+                    <input type="text" placeholder="e.g., Luxury Corner Lot Semi-D" required>
+                </div>
+                <div class="form-group full-width">
+                    <label>Location Area Address</label>
+                    <input type="text" placeholder="e.g., Setia Alam, Shah Alam" required>
+                </div>
+                <div class="form-group">
+                    <label>Listing Status</label>
+                    <select required>
+                        <option value="sale">For Sale</option>
+                        <option value="rent">For Rent</option>
+                        <option value="launch">New Launch</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Property Category</label>
+                    <select required>
+                        <option value="terrace">Terrace House</option>
+                        <option value="condo">Condominium</option>
+                        <option value="semi-d">Semi-D</option>
+                        <option value="bungalow">Bungalow</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Price Value (RM)</label>
+                    <input type="text" placeholder="e.g., 650000" required>
+                </div>
+                <div class="form-group">
+                    <label>Build Up Size (sf)</label>
+                    <input type="number" placeholder="e.g., 1500" required>
+                </div>
+                <div class="form-group">
+                    <label>Bedrooms Count</label>
+                    <input type="number" placeholder="e.g., 4" required>
+                </div>
+                <div class="form-group">
+                    <label>Bathrooms Count</label>
+                    <input type="number" placeholder="e.g., 3" required>
+                </div>
+                <div class="form-group full-width">
+                    <label>Image Reference Link URL</label>
+                    <input type="url" placeholder="https://images.unsplash.com/..." required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelModalBtn">Cancel</button>
+                    <button type="submit" class="btn-save">Publish Listing</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- UI Operations Modal Control Script -->
+    <script>
+        const modal = document.getElementById('addModalOverlay');
+        const openBtn = document.getElementById('openAddModalBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const cancelBtn = document.getElementById('cancelModalBtn');
+
+        function toggleModal() {
+            modal.classList.toggle('active');
+        }
+
+        openBtn.addEventListener('click', toggleModal);
+        closeBtn.addEventListener('click', toggleModal);
+        cancelBtn.addEventListener('click', toggleModal);
+
+        // Click outside container to dismiss modal safely
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) toggleModal();
+        });
+    </script>
+</body>
+</html>
