@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Syed Agent | SF Realty</title>
+    <title>Syed Agent (REN) | SF Realty</title>
     <!-- Google Fonts & FontAwesome for Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,6 +18,7 @@
             --off-white: #F9F9F9;
             --text-dark: #2D2D2D;
             --text-muted: #666666;
+            --whatsapp-green: #25D366;
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
@@ -52,20 +53,33 @@
         .navbar {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
         }
 
         .logo {
             font-size: 24px;
             font-weight: 700;
             color: var(--text-dark);
+            line-height: 1.2;
         }
 
         .logo span {
             color: var(--primary-orange);
+        }
+
+        .ren-tag {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
         .nav-links {
@@ -96,24 +110,26 @@
         .hero {
             background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.85)), 
                         url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1920&q=80') center/cover;
-            padding: 100px 20px;
+            padding: 80px 20px;
             text-align: center;
         }
 
         .hero-content h1 {
             font-size: 42px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .hero-content h1 span {
             color: var(--primary-orange);
         }
 
-        .hero-content p {
-            font-size: 18px;
+        .hero-ren {
+            font-size: 14px;
+            font-weight: 600;
             color: var(--text-muted);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
         }
 
         /* --- Filter / Search Bar --- */
@@ -211,6 +227,8 @@
             box-shadow: var(--shadow);
             transition: transform 0.3s, box-shadow 0.3s;
             border: 1px solid #F0F0F0;
+            display: flex;
+            flex-direction: column;
         }
 
         .property-card:hover {
@@ -220,7 +238,7 @@
 
         .property-thumb {
             position: relative;
-            height: 200px;
+            height: 180px;
             overflow: hidden;
         }
 
@@ -244,17 +262,20 @@
 
         .property-details {
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
         .price {
-            font-size: 22px;
+            font-size: 20px;
             color: var(--primary-orange);
             font-weight: 700;
             margin-bottom: 5px;
         }
 
         .title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             margin-bottom: 8px;
             white-space: nowrap;
@@ -266,6 +287,9 @@
             font-size: 13px;
             color: var(--text-muted);
             margin-bottom: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .location i {
@@ -277,14 +301,38 @@
             display: flex;
             justify-content: space-between;
             border-top: 1px solid #F0F0F0;
-            padding-top: 15px;
-            font-size: 13px;
+            padding-top: 12px;
+            margin-bottom: 15px;
+            font-size: 12px;
             color: var(--text-muted);
         }
 
         .features span i {
             color: var(--primary-orange);
             margin-right: 4px;
+        }
+
+        /* WhatsApp Button styling per unit */
+        .btn-whatsapp-unit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--pure-white);
+            color: var(--primary-orange);
+            border: 2px solid var(--primary-orange);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: auto; /* Pushes button to bottom of card */
+            transition: all 0.3s ease;
+        }
+
+        .btn-whatsapp-unit:hover {
+            background-color: var(--primary-orange);
+            color: var(--pure-white);
         }
 
         /* --- Footer Section --- */
@@ -299,7 +347,7 @@
         .footer-logo {
             font-size: 24px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .footer-logo span {
@@ -314,13 +362,13 @@
         /* --- Responsive Breakpoints --- */
         @media (max-width: 1200px) {
             .property-grid {
-                grid-template-columns: repeat(3, 1fr); /* 3 items on standard desktops */
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
         @media (max-width: 900px) {
             .property-grid {
-                grid-template-columns: repeat(2, 1fr); /* 2 items on tablets */
+                grid-template-columns: repeat(2, 1fr);
             }
             .search-container {
                 flex-direction: column;
@@ -330,9 +378,9 @@
 
         @media (max-width: 600px) {
             .property-grid {
-                grid-template-columns: 1fr; /* 1 item on mobile screens */
+                grid-template-columns: 1fr;
             }
-            .nav-links {
+            .nav-links, .logo-container .ren-tag {
                 display: none;
             }
         }
@@ -343,14 +391,16 @@
     <!-- Header Navigation -->
     <header>
         <nav class="navbar">
-            <div class="logo">SF <span>Realty</span></div>
+            <div class="logo-container">
+                <div class="logo">SF <span>Realty</span></div>
+                <div class="ren-tag">Syed Agent (REN XXXXX)</div>
+            </div>
             <ul class="nav-links">
                 <li><a href="#">Home</a></li>
                 <li><a href="#">Properties</a></li>
                 <li><a href="#">About Syed</a></li>
-                <li><a href="#">Testimonials</a></li>
             </ul>
-            <a href="https://wa.me/#" class="btn-contact"><i class="fa-brands fa-whatsapp"></i> Contact Syed</a>
+            <a href="https://wa.me/60123456789" target="_blank" class="btn-contact"><i class="fa-brands fa-whatsapp"></i> Contact Syed</a>
         </nav>
     </header>
 
@@ -358,13 +408,13 @@
     <section class="hero">
         <div class="hero-content">
             <h1>Find Your Dream Home With <span>Syed Agent</span></h1>
-            <p>Your trusted real estate partner at SF Realty</p>
+            <div class="hero-ren">Registered Real Estate Negotiator | REN XXXXX</div>
             
             <!-- Search / Filter Bar -->
             <div class="search-container">
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search by location, neighborhood, or project...">
+                    <input type="text" placeholder="Search by location, area, or project...">
                 </div>
                 <select>
                     <option value="">Property Type</option>
@@ -374,11 +424,11 @@
                     <option value="bungalow">Bungalow</option>
                 </select>
                 <select>
-                    <option value="">Budget (Max)</option>
-                    <option value="300k">$300,000</option>
-                    <option value="500k">$500,000</option>
-                    <option value="750k">$750,000</option>
-                    <option value="1m">$1,000,000+</option>
+                    <option value="">Max Budget</option>
+                    <option value="300k">RM 300,000</option>
+                    <option value="500k">RM 500,000</option>
+                    <option value="750k">RM 750,000</option>
+                    <option value="1m">RM 1,000,000+</option>
                 </select>
                 <button class="btn-search">Search</button>
             </div>
@@ -387,7 +437,7 @@
 
     <!-- Main Content Grid -->
     <main class="main-container">
-        <h2 class="section-title">Syed's Featured Listings</h2>
+        <h2 class="section-title">Featured Listings</h2>
         
         <!-- 4 Units Per Row Container -->
         <div class="property-grid">
@@ -399,14 +449,17 @@
                     <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=500&q=80" alt="Property">
                 </div>
                 <div class="property-details">
-                    <div class="price">$520,000</div>
+                    <div class="price">RM 520,000</div>
                     <div class="title">Modern Luxury Villa</div>
                     <div class="location"><i class="fa-solid fa-location-dot"></i> Amber Heights, Section 7</div>
                     <div class="features">
                         <span><i class="fa-solid fa-bed"></i> 4 Beds</span>
                         <span><i class="fa-solid fa-bath"></i> 3 Baths</span>
-                        <span><i class="fa-solid fa-ruler-combined"></i> 2,200 sqft</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 2,200 sf</span>
                     </div>
+                    <a href="https://wa.me/60123456789?text=Hi%20Syed,%20I%20am%20interested%20in%20Modern%20Luxury%20Villa." target="_blank" class="btn-whatsapp-unit">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp Inquiry
+                    </a>
                 </div>
             </div>
 
@@ -417,14 +470,17 @@
                     <img src="https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=500&q=80" alt="Property">
                 </div>
                 <div class="property-details">
-                    <div class="price">$315,000</div>
+                    <div class="price">RM 315,000</div>
                     <div class="title">Skyline View Condominium</div>
                     <div class="location"><i class="fa-solid fa-location-dot"></i> City Centre, Block B</div>
                     <div class="features">
                         <span><i class="fa-solid fa-bed"></i> 3 Beds</span>
                         <span><i class="fa-solid fa-bath"></i> 2 Baths</span>
-                        <span><i class="fa-solid fa-ruler-combined"></i> 1,100 sqft</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 1,100 sf</span>
                     </div>
+                    <a href="https://wa.me/60123456789?text=Hi%20Syed,%20I%20am%20interested%20in%20Skyline%20View%20Condominium." target="_blank" class="btn-whatsapp-unit">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp Inquiry
+                    </a>
                 </div>
             </div>
 
@@ -435,14 +491,17 @@
                     <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=500&q=80" alt="Property">
                 </div>
                 <div class="property-details">
-                    <div class="price">$740,000</div>
+                    <div class="price">RM 740,000</div>
                     <div class="title">2-Story Minimalist Terrace</div>
                     <div class="location"><i class="fa-solid fa-location-dot"></i> Clover Park Residences</div>
                     <div class="features">
                         <span><i class="fa-solid fa-bed"></i> 4 Beds</span>
                         <span><i class="fa-solid fa-bath"></i> 4 Baths</span>
-                        <span><i class="fa-solid fa-ruler-combined"></i> 2,600 sqft</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 2,600 sf</span>
                     </div>
+                    <a href="https://wa.me/60123456789?text=Hi%20Syed,%20I%20am%20interested%20in%202-Story%20Minimalist%20Terrace." target="_blank" class="btn-whatsapp-unit">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp Inquiry
+                    </a>
                 </div>
             </div>
 
@@ -453,14 +512,17 @@
                     <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=500&q=80" alt="Property">
                 </div>
                 <div class="property-details">
-                    <div class="price">$1,250,000</div>
+                    <div class="price">RM 1,250,000</div>
                     <div class="title">Exclusive Botanical Bungalow</div>
                     <div class="location"><i class="fa-solid fa-location-dot"></i> Green Hills Estate</div>
                     <div class="features">
                         <span><i class="fa-solid fa-bed"></i> 5 Beds</span>
                         <span><i class="fa-solid fa-bath"></i> 6 Baths</span>
-                        <span><i class="fa-solid fa-ruler-combined"></i> 4,500 sqft</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 4,500 sf</span>
                     </div>
+                    <a href="https://wa.me/60123456789?text=Hi%20Syed,%20I%20am%20interested%20in%20Exclusive%20Botanical%20Bungalow." target="_blank" class="btn-whatsapp-unit">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp Inquiry
+                    </a>
                 </div>
             </div>
 
@@ -471,14 +533,17 @@
                     <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=500&q=80" alt="Property">
                 </div>
                 <div class="property-details">
-                    <div class="price">$2,200/mo</div>
+                    <div class="price">RM 2,200/mo</div>
                     <div class="title">Cozy Family Townhouse</div>
                     <div class="location"><i class="fa-solid fa-location-dot"></i> Saujana Utama</div>
                     <div class="features">
                         <span><i class="fa-solid fa-bed"></i> 3 Beds</span>
                         <span><i class="fa-solid fa-bath"></i> 3 Baths</span>
-                        <span><i class="fa-solid fa-ruler-combined"></i> 1,800 sqft</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 1,800 sf</span>
                     </div>
+                    <a href="https://wa.me/60123456789?text=Hi%20Syed,%20I%20am%20interested%20in%20Cozy%20Family%20Townhouse." target="_blank" class="btn-whatsapp-unit">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp Inquiry
+                    </a>
                 </div>
             </div>
 
@@ -489,14 +554,17 @@
                     <img src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=500&q=80" alt="Property">
                 </div>
                 <div class="property-details">
-                    <div class="price">$450,000</div>
+                    <div class="price">RM 450,000</div>
                     <div class="title">Urban Duplex Penthouse</div>
-                    <div class="location"><i class="fa-solid fa-location-dot"></i> Metro Heights Metro</div>
+                    <div class="location"><i class="fa-solid fa-location-dot"></i> Metro Heights</div>
                     <div class="features">
                         <span><i class="fa-solid fa-bed"></i> 2 Beds</span>
                         <span><i class="fa-solid fa-bath"></i> 2 Baths</span>
-                        <span><i class="fa-solid fa-ruler-combined"></i> 1,350 sqft</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 1,350 sf</span>
                     </div>
+                    <a href="https://wa.me/60123456789?text=Hi%20Syed,%20I%20am%20interested%20in%20Urban%20Duplex%20Penthouse." target="_blank" class="btn-whatsapp-unit">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp Inquiry
+                    </a>
                 </div>
             </div>
 
@@ -507,14 +575,17 @@
                     <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=500&q=80" alt="Property">
                 </div>
                 <div class="property-details">
-                    <div class="price">$620,000</div>
-                    <div class="title">Modern Smart Home Sem-D</div>
-                    <div class="location"><i class="fa-solid fa-location-dot"></i> Cyber Grove Cyber</div>
+                    <div class="price">RM 620,000</div>
+                    <div class="title">Smart Home Semi-D</div>
+                    <div class="location"><i class="fa-solid fa-location-dot"></i> Cyber Grove</div>
                     <div class="features">
                         <span><i class="fa-solid fa-bed"></i> 4 Beds</span>
                         <span><i class="fa-solid fa-bath"></i> 4 Baths</span>
-                        <span><i class="fa-solid fa-ruler-combined"></i> 2,400 sqft</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 2,400 sf</span>
                     </div>
+                    <a href="https://wa.me/60123456789?text=Hi%20Syed,%20I%20am%20interested%20in%20Smart%20Home%20Semi-D." target="_blank" class="btn-whatsapp-unit">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp Inquiry
+                    </a>
                 </div>
             </div>
 
@@ -525,14 +596,17 @@
                     <img src="https://images.unsplash.com/photo-1513584684374-8bab748fbf90?auto=format&fit=crop&w=500&q=80" alt="Property">
                 </div>
                 <div class="property-details">
-                    <div class="price">$1,800/mo</div>
-                    <div class="title">Studio Apartment Studio</div>
+                    <div class="price">RM 1,800/mo</div>
+                    <div class="title">Modern Studio Suite</div>
                     <div class="location"><i class="fa-solid fa-location-dot"></i> Nexus Suites, Central</div>
                     <div class="features">
                         <span><i class="fa-solid fa-bed"></i> 1 Bed</span>
                         <span><i class="fa-solid fa-bath"></i> 1 Bath</span>
-                        <span><i class="fa-solid fa-ruler-combined"></i> 650 sqft</span>
+                        <span><i class="fa-solid fa-ruler-combined"></i> 650 sf</span>
                     </div>
+                    <a href="https://wa.me/60123456789?text=Hi%20Syed,%20I%20am%20interested%20in%20Modern%20Studio%20Suite." target="_blank" class="btn-whatsapp-unit">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp Inquiry
+                    </a>
                 </div>
             </div>
 
@@ -543,7 +617,7 @@
     <footer>
         <div class="footer-logo">SF <span>Realty</span></div>
         <p class="footer-text">© 2026 Syed Agent - SF Realty. All Rights Reserved.</p>
-        <p class="footer-text" style="font-size: 12px; margin-top: 5px;">Regulated Real Estate Negotiator</p>
+        <p class="footer-text" style="font-size: 12px; margin-top: 5px;">Syed Agent (REN XXXXX) | SF Realty E(1)XXXX</p>
     </footer>
 
 </body>
