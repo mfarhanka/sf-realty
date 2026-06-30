@@ -110,12 +110,17 @@ try {
     }
 
     if ($method === 'DELETE') {
-        $statement = $connection->prepare('DELETE FROM listings WHERE id = :id');
-        $statement->execute(['id' => $listingId]);
+        $existing = fetchListingById($connection, $listingId);
 
-        if ($statement->rowCount() === 0) {
+        if ($existing === null) {
             sendJson(['error' => 'Listing not found.'], 404);
         }
+
+        $existingGallery = is_array($existing['gallery'] ?? null) ? $existing['gallery'] : [];
+        $statement = $connection->prepare('DELETE FROM listings WHERE id = :id');
+        $statement->execute(['id' => $listingId]);
+        deleteListingPhotoFiles($existingGallery);
+        deleteEmptyListingPhotoFolders($existingGallery);
 
         sendJson(['success' => true]);
     }

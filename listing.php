@@ -139,10 +139,32 @@ if ($listing !== null) {
                 <h2>Photo Gallery</h2>
                 <div class="listing-gallery">
                     <?php foreach ($gallery as $index => $image): ?>
-                        <img src="<?= htmlEscape(getImageUrl($image, true)) ?>" alt="<?= htmlEscape($listing['title'] . ' photo ' . ($index + 1)) ?>" loading="lazy">
+                        <?php
+                            $photoUrl = getImageUrl($image, true);
+                            $photoAlt = $listing['title'] . ' photo ' . ($index + 1);
+                        ?>
+                        <button class="gallery-photo" type="button" data-gallery-index="<?= $index ?>" data-gallery-src="<?= htmlEscape($photoUrl) ?>" data-gallery-alt="<?= htmlEscape($photoAlt) ?>" aria-label="<?= htmlEscape('Open ' . $photoAlt) ?>">
+                            <img src="<?= htmlEscape($photoUrl) ?>" alt="<?= htmlEscape($photoAlt) ?>" loading="lazy">
+                        </button>
                     <?php endforeach; ?>
                 </div>
             </section>
+
+            <dialog class="gallery-modal" id="galleryModal" aria-label="Photo gallery viewer">
+                <button class="gallery-modal-close" type="button" data-gallery-close aria-label="Close photo viewer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <button class="gallery-modal-nav gallery-modal-prev" type="button" data-gallery-prev aria-label="Previous photo">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <figure class="gallery-modal-frame">
+                    <img id="galleryModalImage" src="" alt="">
+                    <figcaption id="galleryModalCaption"></figcaption>
+                </figure>
+                <button class="gallery-modal-nav gallery-modal-next" type="button" data-gallery-next aria-label="Next photo">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </dialog>
 
             <section class="listing-section listing-agent">
                 <div>
@@ -159,5 +181,64 @@ if ($listing !== null) {
         <p class="footer-text">&copy; 2026 Syed Ahmad - SF Realty. All Rights Reserved.</p>
         <p class="footer-text footer-registration">Syed Ahmad (REN 64218) | SF Realty E(1)1987 | Registered with LPPEH Malaysia</p>
     </footer>
+    <script>
+        (() => {
+            const modal = document.getElementById('galleryModal');
+
+            if (!modal) {
+                return;
+            }
+
+            const photos = Array.from(document.querySelectorAll('.gallery-photo'));
+            const modalImage = document.getElementById('galleryModalImage');
+            const modalCaption = document.getElementById('galleryModalCaption');
+            const closeButton = modal.querySelector('[data-gallery-close]');
+            const prevButton = modal.querySelector('[data-gallery-prev]');
+            const nextButton = modal.querySelector('[data-gallery-next]');
+            let activeIndex = 0;
+
+            const showPhoto = (index) => {
+                activeIndex = (index + photos.length) % photos.length;
+                const photo = photos[activeIndex];
+
+                modalImage.src = photo.dataset.gallerySrc;
+                modalImage.alt = photo.dataset.galleryAlt;
+                modalCaption.textContent = `${photo.dataset.galleryAlt} (${activeIndex + 1} of ${photos.length})`;
+            };
+
+            const openModal = (index) => {
+                showPhoto(index);
+                modal.showModal();
+            };
+
+            photos.forEach((photo, index) => {
+                photo.addEventListener('click', () => openModal(index));
+            });
+
+            closeButton.addEventListener('click', () => modal.close());
+            prevButton.addEventListener('click', () => showPhoto(activeIndex - 1));
+            nextButton.addEventListener('click', () => showPhoto(activeIndex + 1));
+
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.close();
+                }
+            });
+
+            modal.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowLeft') {
+                    showPhoto(activeIndex - 1);
+                }
+
+                if (event.key === 'ArrowRight') {
+                    showPhoto(activeIndex + 1);
+                }
+            });
+
+            modal.addEventListener('close', () => {
+                modalImage.removeAttribute('src');
+            });
+        })();
+    </script>
 </body>
 </html>

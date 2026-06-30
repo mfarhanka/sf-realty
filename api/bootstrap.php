@@ -187,6 +187,45 @@ function deleteListingPhotoFiles(array $photoPaths): void
     }
 }
 
+function deleteEmptyListingPhotoFolders(array $photoPaths): void
+{
+    $imageRoot = realpath(dirname(__DIR__) . '/assets/images/listings');
+
+    if ($imageRoot === false) {
+        return;
+    }
+
+    $directories = [];
+
+    foreach ($photoPaths as $photoPath) {
+        if (!str_starts_with($photoPath, 'assets/images/listings/')) {
+            continue;
+        }
+
+        $absoluteDirectory = realpath(dirname(__DIR__) . '/' . dirname($photoPath));
+
+        if ($absoluteDirectory === false || !is_dir($absoluteDirectory)) {
+            continue;
+        }
+
+        if ($absoluteDirectory === $imageRoot || !str_starts_with($absoluteDirectory, $imageRoot . DIRECTORY_SEPARATOR)) {
+            continue;
+        }
+
+        $directories[$absoluteDirectory] = strlen($absoluteDirectory);
+    }
+
+    arsort($directories);
+
+    foreach (array_keys($directories) as $directory) {
+        $contents = scandir($directory);
+
+        if ($contents !== false && array_diff($contents, ['.', '..']) === []) {
+            rmdir($directory);
+        }
+    }
+}
+
 function getListingGalleryForImage(string $image): array
 {
     if (!str_starts_with($image, 'assets/images/listings/')) {
