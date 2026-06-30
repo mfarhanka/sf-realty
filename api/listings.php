@@ -7,6 +7,12 @@ require __DIR__ . '/bootstrap.php';
 try {
     $connection = getDatabaseConnection();
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    $payload = readListingRequestPayload();
+
+    if ($method === 'POST' && strtoupper((string) ($payload['_method'] ?? '')) === 'PUT') {
+        $method = 'PUT';
+    }
+
     $listingId = isset($_GET['id']) ? (int) $_GET['id'] : null;
 
     if ($method === 'GET') {
@@ -14,14 +20,24 @@ try {
     }
 
     if ($method === 'POST') {
-        $listing = requireListingPayload(readJsonBody());
+        $listing = requireListingPayload($payload);
         $statement = $connection->prepare(
             'INSERT INTO listings (title, location, status, type, price, size, bedrooms, bathrooms, image_url)
              VALUES (:title, :location, :status, :type, :price, :size, :bedrooms, :bathrooms, :image_url)'
         );
         $statement->execute($listing);
 
-        $created = fetchListingById($connection, (int) $connection->lastInsertId());
+        $createdId = (int) $connection->lastInsertId();
+        $uploadedPhotos = saveUploadedListingPhotos($createdId, $listing['title']);
+
+        if ($uploadedPhotos !== []) {
+            $coverIndex = max(0, (int) ($payload['cover_upload_index'] ?? 0));
+            $coverImage = $uploadedPhotos[$coverIndex] ?? $uploadedPhotos[0];
+            $coverStatement = $connection->prepare('UPDATE listings SET image_url = :image_url WHERE id = :id');
+            $coverStatement->execute(['image_url' => $coverImage, 'id' => $createdId]);
+        }
+
+        $created = fetchListingById($connection, $createdId);
         sendJson(['listing' => $created], 201);
     }
 
@@ -36,7 +52,23 @@ try {
             sendJson(['error' => 'Listing not found.'], 404);
         }
 
-        $listing = requireListingPayload(readJsonBody());
+        $listing = requireListingPayload($payload);
+        $uploadedPhotos = saveUploadedListingPhotos($listingId, $listing['title']);
+        $selectedCover = trim((string) ($payload['cover_image'] ?? ''));
+
+        if ($selectedCover !== '') {
+            $listing['image_url'] = $selectedCover;
+        }
+
+        if ($uploadedPhotos !== []) {
+            $coverIndex = max(0, (int) ($payload['cover_upload_index'] ?? 0));
+            $listing['image_url'] = $uploadedPhotos[$coverIndex] ?? $uploadedPhotos[0];
+        }
+
+        if ($listing['image_url'] === '') {
+            $listing['image_url'] = (string) $existing['image'];
+        }
+
         $listing['id'] = $listingId;
 
         $statement = $connection->prepare(

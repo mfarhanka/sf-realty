@@ -21,6 +21,10 @@ function parsePriceValue(price) {
 function normalizeType(type) {
     const value = type.toLowerCase();
 
+    if (value.includes('studio')) {
+        return 'studio';
+    }
+
     if (value.includes('condo')) {
         return 'condo';
     }
@@ -44,27 +48,44 @@ function buildWhatsAppUrl(title) {
     return `https://wa.me/60123456789?text=${encodeURIComponent(`Hi Syed, I am interested in ${title}.`)}`;
 }
 
+function slugify(text) {
+    return text
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'property';
+}
+
+function buildListingUrl(listing) {
+    return `listing/${listing.id}/${slugify(listing.title)}`;
+}
+
 function renderPropertyCard(listing) {
+    const listingUrl = buildListingUrl(listing);
+
     return `
-        <div class="property-card">
-            <div class="property-thumb">
+        <article class="property-card">
+            <a class="property-thumb" href="${listingUrl}" aria-label="View ${listing.title} details">
                 <span class="tag-status">${statusLabelMap[listing.status]}</span>
-                <img src="${listing.image}" alt="${listing.title}">
-            </div>
+                <img src="${listing.image}" alt="${listing.title} in ${listing.location}" loading="lazy">
+            </a>
             <div class="property-details">
                 <div class="price">${listing.price}</div>
-                <div class="title">${listing.title}</div>
+                <h3 class="title"><a href="${listingUrl}">${listing.title}</a></h3>
                 <div class="location"><i class="fa-solid fa-location-dot"></i> ${listing.location}</div>
                 <div class="features">
                     <span><i class="fa-solid fa-bed"></i> ${listing.bedrooms} Beds</span>
                     <span><i class="fa-solid fa-bath"></i> ${listing.bathrooms} Baths</span>
                     <span><i class="fa-solid fa-ruler-combined"></i> ${Number(listing.size).toLocaleString()} sf</span>
                 </div>
-                <a href="${buildWhatsAppUrl(listing.title)}" target="_blank" class="btn-whatsapp-unit">
-                    <i class="fa-brands fa-whatsapp"></i> WhatsApp Inquiry
-                </a>
+                <div class="property-actions">
+                    <a href="${listingUrl}" class="btn-details">Details</a>
+                    <a href="${buildWhatsAppUrl(listing.title)}" target="_blank" rel="noopener" class="btn-whatsapp-unit">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                    </a>
+                </div>
             </div>
-        </div>
+        </article>
     `;
 }
 

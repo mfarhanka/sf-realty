@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: http://localhost/sf-realty/sitemap.php

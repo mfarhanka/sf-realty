@@ -373,6 +373,12 @@ td {
     color: var(--text-dark);
 }
 
+.form-help {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
 .form-group input,
 .form-group select {
     padding: 10px;
@@ -417,6 +423,58 @@ td {
 
 .btn-save:hover {
     background-color: var(--dark-orange);
+}
+
+.confirm-modal-box {
+    width: 460px;
+}
+
+.confirm-modal-content {
+    padding: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.confirm-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #FEE2E2;
+    color: var(--danger-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.confirm-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.confirm-copy {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.confirm-modal-footer {
+    padding: 0 24px 24px;
+    margin-top: 0;
+}
+
+.btn-danger {
+    background-color: var(--danger-red);
+    color: var(--pure-white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background-color: #DC2626;
 }
 
 /* --- Responsive Viewports --- */

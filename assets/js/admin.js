@@ -7,6 +7,11 @@ const listingTableBody = document.getElementById('listingTableBody');
 const searchInput = document.getElementById('listingSearchInput');
 const modalTitle = document.getElementById('modalTitle');
 const submitButton = document.getElementById('submitListingBtn');
+const deleteModal = document.getElementById('deleteModalOverlay');
+const closeDeleteButton = document.getElementById('closeDeleteModalBtn');
+const cancelDeleteButton = document.getElementById('cancelDeleteModalBtn');
+const confirmDeleteButton = document.getElementById('confirmDeleteBtn');
+const deleteListingName = document.getElementById('deleteListingName');
 const apiUrl = window.sfRealtyApiUrl || '../api/listings.php';
 
 const stats = {
@@ -25,7 +30,9 @@ const formFields = {
     size: document.getElementById('listingSizeInput'),
     bedrooms: document.getElementById('listingBedroomsInput'),
     bathrooms: document.getElementById('listingBathroomsInput'),
-    image: document.getElementById('listingImageInput')
+    image: document.getElementById('listingImageInput'),
+    photos: document.getElementById('listingPhotosInput'),
+    cover: document.getElementById('listingCoverInput')
 };
 
 const badgeConfig = {
@@ -47,6 +54,15 @@ const typeValueMap = {
 
 let listings = [];
 let editingListingId = null;
+let pendingDeleteListingId = null;
+
+function resolveAdminImageUrl(image) {
+    if (/^https?:\/\//i.test(image) || image.startsWith('../')) {
+        return image;
+    }
+
+    return image.startsWith('assets/') ? `../${image}` : image;
+}
 
 function openModal() {
     modal.classList.add('active');
@@ -56,11 +72,22 @@ function closeModal() {
     modal.classList.remove('active');
 }
 
+function openDeleteModal() {
+    deleteModal.classList.add('active');
+}
+
+function closeDeleteModal() {
+    deleteModal.classList.remove('active');
+    pendingDeleteListingId = null;
+    deleteListingName.textContent = 'This action will remove the listing from the website and admin panel.';
+}
+
 function resetForm() {
     listingForm.reset();
     editingListingId = null;
     modalTitle.textContent = 'Create New Property Record';
     submitButton.textContent = 'Publish Listing';
+    resetCoverOptions();
 }
 
 function formatSize(size) {
@@ -84,14 +111,36 @@ function formatPrice(price) {
     return isRentalPrice ? `RM ${formattedNumber}/mo` : `RM ${formattedNumber}`;
 }
 
+function resetCoverOptions() {
+    formFields.cover.innerHTML = '<option value="">Use current cover or first uploaded photo</option>';
+}
+
+function addCoverOption(value, label, selected = false) {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = label;
+    option.selected = selected;
+    formFields.cover.append(option);
+}
+
+function refreshUploadedCoverOptions() {
+    [...formFields.cover.querySelectorAll('option[data-upload-option="true"]')].forEach((option) => option.remove());
+
+    [...formFields.photos.files].forEach((file, index) => {
+        addCoverOption(`__upload:${index}`, `New upload: ${file.name}`, index === 0 && formFields.cover.value === '');
+        formFields.cover.lastElementChild.dataset.uploadOption = 'true';
+    });
+}
+
 function createTableRow(listing) {
     const badge = badgeConfig[listing.status];
+    const imageUrl = resolveAdminImageUrl(listing.image);
 
     return `
         <tr data-id="${listing.id}">
             <td>
                 <div class="property-cell">
-                    <img src="${listing.image}" alt="${listing.title}">
+                    <img src="${imageUrl}" alt="${listing.title}">
                     <div>
                         <div class="property-name">${listing.title}</div>
                         <div class="property-loc">${listing.location}</div>
@@ -142,20 +191,34 @@ function renderListings(filterText = '') {
 }
 
 function getFormValues() {
-    return {
-        title: formFields.title.value.trim(),
-        location: formFields.location.value.trim(),
-        status: formFields.status.value,
-        type: formFields.type.options[formFields.type.selectedIndex].text,
-        price: formatPrice(formFields.price.value),
-        size: Number(formFields.size.value),
-        bedrooms: Number(formFields.bedrooms.value),
-        bathrooms: Number(formFields.bathrooms.value),
-        image: formFields.image.value.trim()
-    };
+    const formData = new FormData();
+    const coverValue = formFields.cover.value;
+
+    formData.append('title', formFields.title.value.trim());
+    formData.append('location', formFields.location.value.trim());
+    formData.append('status', formFields.status.value);
+    formData.append('type', formFields.type.options[formFields.type.selectedIndex].text);
+    formData.append('price', formatPrice(formFields.price.value));
+    formData.append('size', Number(formFields.size.value));
+    formData.append('bedrooms', Number(formFields.bedrooms.value));
+    formData.append('bathrooms', Number(formFields.bathrooms.value));
+    formData.append('image', formFields.image.value.trim());
+
+    if (coverValue.startsWith('__upload:')) {
+        formData.append('cover_upload_index', coverValue.replace('__upload:', ''));
+    } else {
+        formData.append('cover_image', coverValue);
+    }
+
+    [...formFields.photos.files].forEach((file) => {
+        formData.append('photos[]', file);
+    });
+
+    return formData;
 }
 
 function populateForm(listing) {
+    resetCoverOptions();
     formFields.title.value = listing.title;
     formFields.location.value = listing.location;
     formFields.status.value = listing.status;
@@ -165,6 +228,15 @@ function populateForm(listing) {
     formFields.bedrooms.value = listing.bedrooms;
     formFields.bathrooms.value = listing.bathrooms;
     formFields.image.value = listing.image;
+
+    if (Array.isArray(listing.gallery)) {
+        listing.gallery.forEach((imagePath, index) => {
+            const label = imagePath === listing.image ? `Current cover: Photo ${index + 1}` : `Existing photo ${index + 1}`;
+            addCoverOption(imagePath, label, imagePath === listing.image);
+        });
+    } else if (listing.image) {
+        addCoverOption(listing.image, 'Current cover image', true);
+    }
 }
 
 function handleEditListing(listingId) {
@@ -182,7 +254,15 @@ function handleEditListing(listingId) {
 }
 
 function handleDeleteListing(listingId) {
-    deleteListing(listingId);
+    const listing = listings.find((item) => item.id === listingId);
+
+    if (!listing) {
+        return;
+    }
+
+    pendingDeleteListingId = listingId;
+    deleteListingName.textContent = `${listing.title} in ${listing.location} will be removed from the website and admin panel.`;
+    openDeleteModal();
 }
 
 async function handleFormSubmit(event) {
@@ -202,11 +282,14 @@ async function handleFormSubmit(event) {
 }
 
 async function requestJson(url, options = {}) {
+    const isFormData = options.body instanceof FormData;
     const response = await fetch(url, {
-        headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json'
-        },
+        headers: isFormData
+            ? { Accept: 'application/json' }
+            : {
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            },
         ...options
     });
 
@@ -229,14 +312,16 @@ async function loadListings(filterText = '') {
 async function createListing(payload) {
     await requestJson(apiUrl, {
         method: 'POST',
-        body: JSON.stringify(payload)
+        body: payload
     });
 }
 
 async function updateListing(listingId, payload) {
+    payload.append('_method', 'PUT');
+
     await requestJson(`${apiUrl}?id=${listingId}`, {
-        method: 'PUT',
-        body: JSON.stringify(payload)
+        method: 'POST',
+        body: payload
     });
 }
 
@@ -245,6 +330,24 @@ async function deleteListing(listingId) {
         method: 'DELETE'
     });
     await loadListings(searchInput.value);
+}
+
+async function confirmPendingDelete() {
+    if (pendingDeleteListingId === null) {
+        return;
+    }
+
+    const listingId = pendingDeleteListingId;
+    confirmDeleteButton.disabled = true;
+    confirmDeleteButton.textContent = 'Deleting...';
+
+    try {
+        await deleteListing(listingId);
+        closeDeleteModal();
+    } finally {
+        confirmDeleteButton.disabled = false;
+        confirmDeleteButton.textContent = 'Delete Listing';
+    }
 }
 
 openButton.addEventListener('click', () => {
@@ -262,7 +365,13 @@ cancelButton.addEventListener('click', () => {
     closeModal();
 });
 
+closeDeleteButton.addEventListener('click', closeDeleteModal);
+cancelDeleteButton.addEventListener('click', closeDeleteModal);
+confirmDeleteButton.addEventListener('click', confirmPendingDelete);
+
 listingForm.addEventListener('submit', handleFormSubmit);
+
+formFields.photos.addEventListener('change', refreshUploadedCoverOptions);
 
 searchInput.addEventListener('input', (event) => {
     renderListings(event.target.value);
@@ -291,6 +400,10 @@ window.addEventListener('click', (event) => {
     if (event.target === modal) {
         resetForm();
         closeModal();
+    }
+
+    if (event.target === deleteModal) {
+        closeDeleteModal();
     }
 });
 

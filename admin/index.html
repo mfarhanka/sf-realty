@@ -228,14 +228,47 @@
                     <input type="number" id="listingBathroomsInput" name="bathrooms" placeholder="e.g., 3" required>
                 </div>
                 <div class="form-group full-width">
-                    <label>Image Reference Link URL</label>
-                    <input type="url" id="listingImageInput" name="image" placeholder="https://images.unsplash.com/..." required>
+                    <label>Upload Listing Photos</label>
+                    <input type="file" id="listingPhotosInput" name="photos[]" accept="image/*" multiple>
+                    <small class="form-help">Photos are saved into a unique listing folder. Pick a cover below.</small>
+                </div>
+                <div class="form-group full-width">
+                    <label>Cover Photo</label>
+                    <select id="listingCoverInput" name="cover_image">
+                        <option value="">Use current cover or first uploaded photo</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label>External Cover Image URL</label>
+                    <input type="url" id="listingImageInput" name="image" placeholder="https://images.unsplash.com/...">
+                    <small class="form-help">Optional. Use this only when the cover image is hosted outside this site.</small>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" id="cancelModalBtn">Cancel</button>
                     <button type="submit" class="btn-save" id="submitListingBtn">Publish Listing</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Delete Listing Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModalOverlay">
+        <div class="modal-box confirm-modal-box">
+            <div class="modal-header">
+                <h3>Remove Listing</h3>
+                <button class="btn-close-modal" id="closeDeleteModalBtn">&times;</button>
+            </div>
+            <div class="confirm-modal-content">
+                <div class="confirm-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div>
+                    <p class="confirm-title">Delete this property listing?</p>
+                    <p class="confirm-copy" id="deleteListingName">This action will remove the listing from the website and admin panel.</p>
+                </div>
+            </div>
+            <div class="modal-footer confirm-modal-footer">
+                <button type="button" class="btn-cancel" id="cancelDeleteModalBtn">Cancel</button>
+                <button type="button" class="btn-danger" id="confirmDeleteBtn">Delete Listing</button>
+            </div>
         </div>
     </div>
 

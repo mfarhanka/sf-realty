@@ -1,0 +1,6 @@
+DirectoryIndex index.php index.html
+
+RewriteEngine On
+RewriteRule ^index\.html$ ./ [R=301,L]
+RewriteRule ^listing/([0-9]+)/[a-z0-9-]+/?$ listing.php?id=$1 [L,QSA]
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
