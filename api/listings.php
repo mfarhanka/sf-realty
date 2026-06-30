@@ -59,20 +59,33 @@ try {
         }
 
         $listing = requireListingPayload($payload);
+        $existingGallery = is_array($existing['gallery'] ?? null) ? $existing['gallery'] : [];
+        $requestedDeletes = getPayloadStringList($payload['deleted_photos'] ?? []);
+        $deletedPhotos = array_values(array_intersect($existingGallery, $requestedDeletes));
+        $remainingExistingPhotos = array_values(array_diff($existingGallery, $deletedPhotos));
         $uploadedPhotos = saveUploadedListingPhotos($listingId, $listing['title']);
         $selectedCover = trim((string) ($payload['cover_image'] ?? ''));
+        $selectedUploadCover = array_key_exists('cover_upload_index', $payload);
 
-        if ($selectedCover !== '') {
+        if ($selectedCover !== '' && in_array($selectedCover, $remainingExistingPhotos, true)) {
             $listing['image_url'] = $selectedCover;
         }
 
-        if ($uploadedPhotos !== []) {
+        if ($uploadedPhotos !== [] && ($selectedUploadCover || $listing['image_url'] === '')) {
             $coverIndex = max(0, (int) ($payload['cover_upload_index'] ?? 0));
             $listing['image_url'] = $uploadedPhotos[$coverIndex] ?? $uploadedPhotos[0];
         }
 
-        if ($listing['image_url'] === '') {
+        if ($listing['image_url'] === '' && in_array((string) $existing['image'], $remainingExistingPhotos, true)) {
             $listing['image_url'] = (string) $existing['image'];
+        }
+
+        if ($listing['image_url'] === '' && $remainingExistingPhotos !== []) {
+            $listing['image_url'] = $remainingExistingPhotos[0];
+        }
+
+        if ($listing['image_url'] === '') {
+            sendJson(['error' => 'Keep at least one listing photo or upload a new one.'], 422);
         }
 
         $listing['id'] = $listingId;
@@ -91,6 +104,7 @@ try {
              WHERE id = :id'
         );
         $statement->execute($listing);
+        deleteListingPhotoFiles($deletedPhotos);
 
         sendJson(['listing' => fetchListingById($connection, $listingId)]);
     }

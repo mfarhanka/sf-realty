@@ -148,6 +148,45 @@ function saveUploadedListingPhotos(int $listingId, string $title): array
     return $savedPaths;
 }
 
+function getPayloadStringList(mixed $value): array
+{
+    if (!is_array($value)) {
+        return $value === null || $value === '' ? [] : [trim((string) $value)];
+    }
+
+    return array_values(array_filter(
+        array_map(static fn (mixed $item): string => trim((string) $item), $value),
+        static fn (string $item): bool => $item !== ''
+    ));
+}
+
+function deleteListingPhotoFiles(array $photoPaths): void
+{
+    $imageRoot = realpath(dirname(__DIR__) . '/assets/images/listings');
+
+    if ($imageRoot === false) {
+        return;
+    }
+
+    foreach ($photoPaths as $photoPath) {
+        if (!str_starts_with($photoPath, 'assets/images/listings/')) {
+            continue;
+        }
+
+        $absolutePath = realpath(dirname(__DIR__) . '/' . $photoPath);
+
+        if ($absolutePath === false || !is_file($absolutePath)) {
+            continue;
+        }
+
+        if ($absolutePath === $imageRoot || !str_starts_with($absolutePath, $imageRoot . DIRECTORY_SEPARATOR)) {
+            continue;
+        }
+
+        unlink($absolutePath);
+    }
+}
+
 function getListingGalleryForImage(string $image): array
 {
     if (!str_starts_with($image, 'assets/images/listings/')) {

@@ -460,7 +460,39 @@ td {
     overflow: hidden;
 }
 
-.photo-preview-card img {
+.photo-preview-card.is-cover {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 2px var(--light-orange);
+}
+
+.photo-cover-btn {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.photo-cover-btn::after {
+    content: "Set cover";
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    padding: 4px 7px;
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.78);
+    color: var(--pure-white);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.photo-preview-card.is-cover .photo-cover-btn::after {
+    content: "Cover";
+    background: var(--primary-orange);
+}
+
+.photo-cover-btn img {
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;

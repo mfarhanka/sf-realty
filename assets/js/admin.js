@@ -32,8 +32,7 @@ const formFields = {
     size: document.getElementById('listingSizeInput'),
     bedrooms: document.getElementById('listingBedroomsInput'),
     bathrooms: document.getElementById('listingBathroomsInput'),
-    photos: document.getElementById('listingPhotosInput'),
-    cover: document.getElementById('listingCoverInput')
+    photos: document.getElementById('listingPhotosInput')
 };
 
 const badgeConfig = {
@@ -57,6 +56,9 @@ let listings = [];
 let editingListingId = null;
 let pendingDeleteListingId = null;
 let selectedPhotoFiles = [];
+let existingPhotoPaths = [];
+let deletedPhotoPaths = [];
+let selectedCoverValue = '';
 
 function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, (character) => ({
@@ -97,11 +99,13 @@ function closeDeleteModal() {
 function resetForm() {
     listingForm.reset();
     selectedPhotoFiles = [];
+    existingPhotoPaths = [];
+    deletedPhotoPaths = [];
+    selectedCoverValue = '';
     syncPhotoInputFiles();
     editingListingId = null;
     modalTitle.textContent = 'Create New Property Record';
     submitButton.textContent = 'Publish Listing';
-    resetCoverOptions();
     renderPhotoPreview();
 }
 
@@ -126,18 +130,6 @@ function formatPrice(price) {
     return isRentalPrice ? `RM ${formattedNumber}/mo` : `RM ${formattedNumber}`;
 }
 
-function resetCoverOptions() {
-    formFields.cover.innerHTML = '<option value="">Use current cover or first uploaded photo</option>';
-}
-
-function addCoverOption(value, label, selected = false) {
-    const option = document.createElement('option');
-    option.value = value;
-    option.textContent = label;
-    option.selected = selected;
-    formFields.cover.append(option);
-}
-
 function syncPhotoInputFiles() {
     const dataTransfer = new DataTransfer();
 
@@ -149,34 +141,79 @@ function setSelectedPhotoFiles(files, append = true) {
     const imageFiles = [...files].filter((file) => file.type.startsWith('image/'));
     selectedPhotoFiles = append ? [...selectedPhotoFiles, ...imageFiles] : imageFiles;
     syncPhotoInputFiles();
-    refreshUploadedCoverOptions();
     renderPhotoPreview();
 }
 
+function getAvailableExistingPhotos() {
+    return existingPhotoPaths.filter((imagePath) => !deletedPhotoPaths.includes(imagePath));
+}
+
+function normalizeSelectedCover() {
+    const existingPhotos = getAvailableExistingPhotos();
+
+    if (selectedCoverValue.startsWith('__upload:')) {
+        const uploadIndex = Number(selectedCoverValue.replace('__upload:', ''));
+        if (selectedPhotoFiles[uploadIndex]) {
+            return;
+        }
+    }
+
+    if (selectedCoverValue !== '' && existingPhotos.includes(selectedCoverValue)) {
+        return;
+    }
+
+    if (existingPhotos.length > 0) {
+        selectedCoverValue = existingPhotos[0];
+        return;
+    }
+
+    selectedCoverValue = selectedPhotoFiles.length > 0 ? '__upload:0' : '';
+}
+
 function renderPhotoPreview() {
-    if (selectedPhotoFiles.length === 0) {
+    normalizeSelectedCover();
+
+    const existingPhotos = getAvailableExistingPhotos();
+
+    if (existingPhotos.length === 0 && selectedPhotoFiles.length === 0) {
         photoPreview.innerHTML = '';
         return;
     }
 
-    photoPreview.innerHTML = selectedPhotoFiles.map((file, index) => `
-        <div class="photo-preview-card">
-            <img src="${URL.createObjectURL(file)}" alt="${escapeHtml(file.name)}">
+    const existingCards = existingPhotos.map((imagePath, index) => {
+        const isCover = selectedCoverValue === imagePath;
+
+        return `
+        <div class="photo-preview-card ${isCover ? 'is-cover' : ''}">
+            <button type="button" class="photo-cover-btn" data-cover-existing="${escapeHtml(imagePath)}" aria-label="Use existing photo ${index + 1} as cover">
+                <img src="${escapeHtml(resolveAdminImageUrl(imagePath))}" alt="Existing listing photo ${index + 1}">
+            </button>
+            <button type="button" class="photo-remove-btn" data-delete-existing="${escapeHtml(imagePath)}" aria-label="Delete existing photo ${index + 1}">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+            <span>${isCover ? 'Cover photo' : `Existing photo ${index + 1}`}</span>
+        </div>
+        `;
+    }).join('');
+
+    const uploadCards = selectedPhotoFiles.map((file, index) => {
+        const coverValue = `__upload:${index}`;
+        const isCover = selectedCoverValue === coverValue;
+
+        return `
+        <div class="photo-preview-card ${isCover ? 'is-cover' : ''}">
+            <button type="button" class="photo-cover-btn" data-cover-upload="${index}" aria-label="Use ${escapeHtml(file.name)} as cover">
+                <img src="${URL.createObjectURL(file)}" alt="${escapeHtml(file.name)}">
+            </button>
             <button type="button" class="photo-remove-btn" data-photo-index="${index}" aria-label="Remove ${escapeHtml(file.name)}">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <span>${escapeHtml(file.name)}</span>
+            <span>${isCover ? 'Cover photo' : escapeHtml(file.name)}</span>
         </div>
-    `).join('');
-}
+        `;
+    }).join('');
 
-function refreshUploadedCoverOptions() {
-    [...formFields.cover.querySelectorAll('option[data-upload-option="true"]')].forEach((option) => option.remove());
-
-    selectedPhotoFiles.forEach((file, index) => {
-        addCoverOption(`__upload:${index}`, `New upload: ${file.name}`, index === 0 && formFields.cover.value === '');
-        formFields.cover.lastElementChild.dataset.uploadOption = 'true';
-    });
+    photoPreview.innerHTML = existingCards + uploadCards;
 }
 
 function createTableRow(listing) {
@@ -239,7 +276,6 @@ function renderListings(filterText = '') {
 
 function getFormValues() {
     const formData = new FormData();
-    const coverValue = formFields.cover.value;
 
     formData.append('title', formFields.title.value.trim());
     formData.append('location', formFields.location.value.trim());
@@ -250,21 +286,26 @@ function getFormValues() {
     formData.append('bedrooms', Number(formFields.bedrooms.value));
     formData.append('bathrooms', Number(formFields.bathrooms.value));
 
-    if (coverValue.startsWith('__upload:')) {
-        formData.append('cover_upload_index', coverValue.replace('__upload:', ''));
+    normalizeSelectedCover();
+
+    if (selectedCoverValue.startsWith('__upload:')) {
+        formData.append('cover_upload_index', selectedCoverValue.replace('__upload:', ''));
     } else {
-        formData.append('cover_image', coverValue);
+        formData.append('cover_image', selectedCoverValue);
     }
 
     selectedPhotoFiles.forEach((file) => {
         formData.append('photos[]', file);
     });
 
+    deletedPhotoPaths.forEach((imagePath) => {
+        formData.append('deleted_photos[]', imagePath);
+    });
+
     return formData;
 }
 
 function populateForm(listing) {
-    resetCoverOptions();
     formFields.title.value = listing.title;
     formFields.location.value = listing.location;
     formFields.status.value = listing.status;
@@ -273,15 +314,10 @@ function populateForm(listing) {
     formFields.size.value = listing.size;
     formFields.bedrooms.value = listing.bedrooms;
     formFields.bathrooms.value = listing.bathrooms;
-
-    if (Array.isArray(listing.gallery)) {
-        listing.gallery.forEach((imagePath, index) => {
-            const label = imagePath === listing.image ? `Current cover: Photo ${index + 1}` : `Existing photo ${index + 1}`;
-            addCoverOption(imagePath, label, imagePath === listing.image);
-        });
-    } else if (listing.image) {
-        addCoverOption(listing.image, 'Current cover image', true);
-    }
+    existingPhotoPaths = Array.isArray(listing.gallery) ? [...listing.gallery] : (listing.image ? [listing.image] : []);
+    deletedPhotoPaths = [];
+    selectedCoverValue = listing.image || existingPhotoPaths[0] || '';
+    renderPhotoPreview();
 }
 
 function handleEditListing(listingId) {
@@ -451,15 +487,45 @@ photoDropzone.addEventListener('drop', (event) => {
 });
 
 photoPreview.addEventListener('click', (event) => {
+    const existingCoverButton = event.target.closest('[data-cover-existing]');
+    const uploadCoverButton = event.target.closest('[data-cover-upload]');
+    const deleteExistingButton = event.target.closest('[data-delete-existing]');
     const removeButton = event.target.closest('[data-photo-index]');
+
+    if (existingCoverButton) {
+        selectedCoverValue = existingCoverButton.dataset.coverExisting;
+        renderPhotoPreview();
+        return;
+    }
+
+    if (uploadCoverButton) {
+        selectedCoverValue = `__upload:${uploadCoverButton.dataset.coverUpload}`;
+        renderPhotoPreview();
+        return;
+    }
+
+    if (deleteExistingButton) {
+        const imagePath = deleteExistingButton.dataset.deleteExisting;
+        deletedPhotoPaths = [...new Set([...deletedPhotoPaths, imagePath])];
+        renderPhotoPreview();
+        return;
+    }
 
     if (!removeButton) {
         return;
     }
 
-    selectedPhotoFiles.splice(Number(removeButton.dataset.photoIndex), 1);
+    const removedIndex = Number(removeButton.dataset.photoIndex);
+    selectedPhotoFiles.splice(removedIndex, 1);
+
+    if (selectedCoverValue === `__upload:${removedIndex}`) {
+        selectedCoverValue = '';
+    } else if (selectedCoverValue.startsWith('__upload:')) {
+        const coverIndex = Number(selectedCoverValue.replace('__upload:', ''));
+        selectedCoverValue = coverIndex > removedIndex ? `__upload:${coverIndex - 1}` : selectedCoverValue;
+    }
+
     syncPhotoInputFiles();
-    refreshUploadedCoverOptions();
     renderPhotoPreview();
 });
 
