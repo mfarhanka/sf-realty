@@ -21,6 +21,12 @@ try {
 
     if ($method === 'POST') {
         $listing = requireListingPayload($payload);
+        $uploadedPhotoList = getUploadedPhotoList();
+
+        if ($uploadedPhotoList === []) {
+            sendJson(['error' => 'Upload at least one listing photo.'], 422);
+        }
+
         $statement = $connection->prepare(
             'INSERT INTO listings (title, location, status, type, price, size, bedrooms, bathrooms, image_url)
              VALUES (:title, :location, :status, :type, :price, :size, :bedrooms, :bathrooms, :image_url)'

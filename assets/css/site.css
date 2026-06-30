@@ -73,6 +73,14 @@ header {
     background-color: var(--dark-orange);
 }
 
+.btn-contact:has(.fa-whatsapp) {
+    background-color: var(--whatsapp-green);
+}
+
+.btn-contact:has(.fa-whatsapp):hover {
+    background-color: #1EBE57;
+}
+
 /* --- Hero Section --- */
 .hero {
     background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.85)), 
@@ -285,9 +293,9 @@ header {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background-color: var(--pure-white);
-    color: var(--primary-orange);
-    border: 2px solid var(--primary-orange);
+    background-color: var(--whatsapp-green);
+    color: var(--pure-white);
+    border: 2px solid var(--whatsapp-green);
     padding: 10px;
     border-radius: 6px;
     font-size: 14px;
@@ -298,7 +306,8 @@ header {
 }
 
 .btn-whatsapp-unit:hover {
-    background-color: var(--primary-orange);
+    background-color: #1EBE57;
+    border-color: #1EBE57;
     color: var(--pure-white);
 }
 

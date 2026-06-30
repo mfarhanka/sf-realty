@@ -229,7 +229,13 @@
                 </div>
                 <div class="form-group full-width">
                     <label>Upload Listing Photos</label>
-                    <input type="file" id="listingPhotosInput" name="photos[]" accept="image/*" multiple>
+                    <div class="photo-dropzone" id="listingPhotoDropzone" tabindex="0" role="button" aria-label="Upload listing photos">
+                        <input type="file" id="listingPhotosInput" name="photos[]" accept="image/*" multiple>
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <strong>Drag and drop listing photos here</strong>
+                        <span>or click to choose multiple images</span>
+                    </div>
+                    <div class="photo-preview-grid" id="listingPhotoPreview" aria-live="polite"></div>
                     <small class="form-help">Photos are saved into a unique listing folder. Pick a cover below.</small>
                 </div>
                 <div class="form-group full-width">
@@ -237,11 +243,6 @@
                     <select id="listingCoverInput" name="cover_image">
                         <option value="">Use current cover or first uploaded photo</option>
                     </select>
-                </div>
-                <div class="form-group full-width">
-                    <label>External Cover Image URL</label>
-                    <input type="url" id="listingImageInput" name="image" placeholder="https://images.unsplash.com/...">
-                    <small class="form-help">Optional. Use this only when the cover image is hosted outside this site.</small>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" id="cancelModalBtn">Cancel</button>

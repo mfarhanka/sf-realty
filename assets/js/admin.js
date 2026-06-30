@@ -13,6 +13,8 @@ const cancelDeleteButton = document.getElementById('cancelDeleteModalBtn');
 const confirmDeleteButton = document.getElementById('confirmDeleteBtn');
 const deleteListingName = document.getElementById('deleteListingName');
 const apiUrl = window.sfRealtyApiUrl || '../api/listings.php';
+const photoDropzone = document.getElementById('listingPhotoDropzone');
+const photoPreview = document.getElementById('listingPhotoPreview');
 
 const stats = {
     total: document.getElementById('totalUnitsCount'),
@@ -30,7 +32,6 @@ const formFields = {
     size: document.getElementById('listingSizeInput'),
     bedrooms: document.getElementById('listingBedroomsInput'),
     bathrooms: document.getElementById('listingBathroomsInput'),
-    image: document.getElementById('listingImageInput'),
     photos: document.getElementById('listingPhotosInput'),
     cover: document.getElementById('listingCoverInput')
 };
@@ -55,6 +56,17 @@ const typeValueMap = {
 let listings = [];
 let editingListingId = null;
 let pendingDeleteListingId = null;
+let selectedPhotoFiles = [];
+
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    }[character]));
+}
 
 function resolveAdminImageUrl(image) {
     if (/^https?:\/\//i.test(image) || image.startsWith('../')) {
@@ -84,10 +96,13 @@ function closeDeleteModal() {
 
 function resetForm() {
     listingForm.reset();
+    selectedPhotoFiles = [];
+    syncPhotoInputFiles();
     editingListingId = null;
     modalTitle.textContent = 'Create New Property Record';
     submitButton.textContent = 'Publish Listing';
     resetCoverOptions();
+    renderPhotoPreview();
 }
 
 function formatSize(size) {
@@ -123,10 +138,42 @@ function addCoverOption(value, label, selected = false) {
     formFields.cover.append(option);
 }
 
+function syncPhotoInputFiles() {
+    const dataTransfer = new DataTransfer();
+
+    selectedPhotoFiles.forEach((file) => dataTransfer.items.add(file));
+    formFields.photos.files = dataTransfer.files;
+}
+
+function setSelectedPhotoFiles(files, append = true) {
+    const imageFiles = [...files].filter((file) => file.type.startsWith('image/'));
+    selectedPhotoFiles = append ? [...selectedPhotoFiles, ...imageFiles] : imageFiles;
+    syncPhotoInputFiles();
+    refreshUploadedCoverOptions();
+    renderPhotoPreview();
+}
+
+function renderPhotoPreview() {
+    if (selectedPhotoFiles.length === 0) {
+        photoPreview.innerHTML = '';
+        return;
+    }
+
+    photoPreview.innerHTML = selectedPhotoFiles.map((file, index) => `
+        <div class="photo-preview-card">
+            <img src="${URL.createObjectURL(file)}" alt="${escapeHtml(file.name)}">
+            <button type="button" class="photo-remove-btn" data-photo-index="${index}" aria-label="Remove ${escapeHtml(file.name)}">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <span>${escapeHtml(file.name)}</span>
+        </div>
+    `).join('');
+}
+
 function refreshUploadedCoverOptions() {
     [...formFields.cover.querySelectorAll('option[data-upload-option="true"]')].forEach((option) => option.remove());
 
-    [...formFields.photos.files].forEach((file, index) => {
+    selectedPhotoFiles.forEach((file, index) => {
         addCoverOption(`__upload:${index}`, `New upload: ${file.name}`, index === 0 && formFields.cover.value === '');
         formFields.cover.lastElementChild.dataset.uploadOption = 'true';
     });
@@ -202,7 +249,6 @@ function getFormValues() {
     formData.append('size', Number(formFields.size.value));
     formData.append('bedrooms', Number(formFields.bedrooms.value));
     formData.append('bathrooms', Number(formFields.bathrooms.value));
-    formData.append('image', formFields.image.value.trim());
 
     if (coverValue.startsWith('__upload:')) {
         formData.append('cover_upload_index', coverValue.replace('__upload:', ''));
@@ -210,7 +256,7 @@ function getFormValues() {
         formData.append('cover_image', coverValue);
     }
 
-    [...formFields.photos.files].forEach((file) => {
+    selectedPhotoFiles.forEach((file) => {
         formData.append('photos[]', file);
     });
 
@@ -227,7 +273,6 @@ function populateForm(listing) {
     formFields.size.value = listing.size;
     formFields.bedrooms.value = listing.bedrooms;
     formFields.bathrooms.value = listing.bathrooms;
-    formFields.image.value = listing.image;
 
     if (Array.isArray(listing.gallery)) {
         listing.gallery.forEach((imagePath, index) => {
@@ -371,7 +416,52 @@ confirmDeleteButton.addEventListener('click', confirmPendingDelete);
 
 listingForm.addEventListener('submit', handleFormSubmit);
 
-formFields.photos.addEventListener('change', refreshUploadedCoverOptions);
+formFields.photos.addEventListener('change', (event) => {
+    setSelectedPhotoFiles(event.target.files, false);
+});
+
+photoDropzone.addEventListener('click', (event) => {
+    if (event.target === formFields.photos) {
+        return;
+    }
+
+    formFields.photos.click();
+});
+
+photoDropzone.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        formFields.photos.click();
+    }
+});
+
+photoDropzone.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    photoDropzone.classList.add('is-dragover');
+});
+
+photoDropzone.addEventListener('dragleave', () => {
+    photoDropzone.classList.remove('is-dragover');
+});
+
+photoDropzone.addEventListener('drop', (event) => {
+    event.preventDefault();
+    photoDropzone.classList.remove('is-dragover');
+    setSelectedPhotoFiles(event.dataTransfer.files);
+});
+
+photoPreview.addEventListener('click', (event) => {
+    const removeButton = event.target.closest('[data-photo-index]');
+
+    if (!removeButton) {
+        return;
+    }
+
+    selectedPhotoFiles.splice(Number(removeButton.dataset.photoIndex), 1);
+    syncPhotoInputFiles();
+    refreshUploadedCoverOptions();
+    renderPhotoPreview();
+});
 
 searchInput.addEventListener('input', (event) => {
     renderListings(event.target.value);
